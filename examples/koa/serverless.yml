@@ -1,0 +1,17 @@
+app: appDemo
+stage: dev
+
+component: koa@dev
+name: koaDemo
+
+inputs:
+  src:
+    src: ./
+    exclude:
+      - .env
+  functionConf:
+    name: ${name}
+  apigatewayConf:
+    protocols:
+      - http
+      - https

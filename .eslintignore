@@ -1,0 +1,13 @@
+coverage
+dist
+node_modules
+example
+*.test.js
+src/_src
+.next
+.nuxt
+build
+
+src/_shims
+src/_fixtures
+examples

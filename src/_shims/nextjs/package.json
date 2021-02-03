@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "tencent-component-monitor": "^1.1.0",
+    "tencent-serverless-http": "^1.2.0"
+  }
+}

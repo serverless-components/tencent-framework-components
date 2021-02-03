@@ -1,0 +1,20 @@
+app: appDemo
+stage: dev
+
+component: thinkphp@dev
+name: thinkphpDemo
+
+inputs:
+  src: ./
+  region: ap-guangzhou
+  functionConf:
+    name: ${name}
+    runtime: Php7
+    environments:
+      variables:
+        APP_ENV: production
+  apigatewayConf:
+    protocols:
+      - http
+      - https
+    environment: release

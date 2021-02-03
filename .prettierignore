@@ -1,0 +1,15 @@
+coverage
+dist
+node_modules
+CHANGELOG.md
+*.test.js
+tests/src/.next
+tests/src/node_modules
+
+.next
+.nuxt
+build
+
+src/_shims
+src/_fixtures
+examples

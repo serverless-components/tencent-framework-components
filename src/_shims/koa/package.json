@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "tencent-serverless-http": "^1.2.0"
+  }
+}

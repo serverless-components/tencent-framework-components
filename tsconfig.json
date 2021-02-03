@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    "strict": true,
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "rootDir": "./src",
+    "outDir": "./build",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "lib": ["es2015"],
+    "sourceMap": false,
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["./src", "./src/typings"],
+  "exclude": ["./build", "./src/_shims/", "./src/_fixtures/"]
+}

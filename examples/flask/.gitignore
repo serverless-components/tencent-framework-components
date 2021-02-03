@@ -1,0 +1,12 @@
+requirements
+bin
+click
+click-7.1.2.dist-info
+flask
+Flask-1.0.2.dist-info
+itsdangerous
+itsdangerous-1.1.0.dist-info
+jinja2
+Jinja2-2.11.2.dist-info
+markupsafe
+MarkupSafe-1.1.1.dist-info

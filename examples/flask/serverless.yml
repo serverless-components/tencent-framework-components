@@ -1,0 +1,26 @@
+app: appDemo
+stage: dev
+
+component: flask
+name: flaskDemo
+
+inputs:
+  src:
+    # TODO: 安装python项目依赖到项目当前目录
+    hook: 'pip3 install -r requirements.txt -t ./requirements'
+    dist: ./
+    include:
+      - source: ./requirements
+        prefix: ../ # prefix, can make ./requirements files/dir to ./
+    exclude:
+      - .env
+      - 'requirements/**'
+  region: ap-guangzhou
+  functionConf:
+    name: ${name}
+    runtime: Python3.6
+  apigatewayConf:
+    protocols:
+      - http
+      - https
+    environment: release

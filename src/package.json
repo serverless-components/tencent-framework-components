@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "adm-zip": "^0.4.16",
+    "download": "^8.0.0",
+    "fs-extra": "^9.1.0",
+    "js-yaml": "^4.0.0",
+    "tencent-component-toolkit": "^2.0.8",
+    "type": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.4.33",
+    "@types/download": "^6.2.4",
+    "@types/fs-extra": "^9.0.6",
+    "@types/js-yaml": "^4.0.0"
+  }
+}
