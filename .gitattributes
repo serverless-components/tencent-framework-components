@@ -1,0 +1,3 @@
+src/_shims/** linguist-vendored
+src/_fixtures/** linguist-vendored
+examples/** linguist-vendored
