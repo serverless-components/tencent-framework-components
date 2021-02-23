@@ -32,20 +32,21 @@ inputs:
     environment: #  环境变量
       variables: #  环境变量数组
         TEST: vale
-    vpcConfig: # 私有网络配置
+    vpc: # 私有网络配置
       vpcId: 'vpc-xxx' # 私有网络的Id
       subnetId: 'subnet-xxx' # 子网ID
+    tags:
+      tagKey: tagValue
     layers:
       - name: layerName #  layer名称
         version: 1 #  版本
-    tags:
-      tagKey: tagValue
   apigatewayConf: #  api网关配置
     isDisabled: false # 是否禁用自动创建 API 网关功能
-    serviceId: service-np1uloxw # api网关服务ID
-    serviceName: serverless # api网关服务ID
-    enableCORS: true #  允许跨域
-    serviceTimeout: 15 # api 超时时间
+    id: service-np1uloxw # api网关服务ID
+    name: serverless # api网关服务名称
+    description: serverless apigw # api网关服务描述
+    timeout: 15 # api 超时时间
+    cors: true #  允许跨域
     protocols:
       - http
       - https
@@ -141,7 +142,7 @@ inputs:
 | timeout     |    否    | number                      |      `3`      | 函数最长执行时间，单位为秒，可选值范围 1-900 秒，默认为 3 秒                    |
 | memorySize  |    否    | number                      |     `128`     | 函数运行时内存大小，默认为 128M，可选范围 64、128MB-3072MB，并且以 128MB 为阶梯 |
 | environment |    否    | [Environment](#Environment) |               | 函数的环境变量                                                                  |
-| vpcConfig   |    否    | [Vpc](#Vpc)                 |               | 函数的 VPC 配置                                                                 |
+| vpc         |    否    | [Vpc](#Vpc)                 |               | 函数的 VPC 配置                                                                 |
 | layers      |    否    | [Layer](#Layer)[]           |               | 云函数绑定的 layer                                                              |
 | tags        |    否    | object                      |               | 云函数标签，`key-value` 形式配置                                                |
 | eip         |    否    | boolean                     |    `false`    | 是否固定出口 IP                                                                 |
@@ -186,18 +187,20 @@ VPC 配置
 
 API 网关配置
 
-| 参数名称       | 是否必选 | 类型                            | 默认值       | 描述                                                             |
-| -------------- | :------: | :------------------------------ | :----------- | :--------------------------------------------------------------- |
-| serviceId      |    否    | string                          |              | API 网关服务 ID, 如果存在将使用这个 API 网关服务                 |
-| serviceName    |    否    | string                          | `serverless` | API 网关服务名称, 默认创建一个新的服务名称                       |
-| protocols      |    否    | string[]                        | `['http']`   | 前端请求的类型，如 http，https，http 与 https                    |
-| environment    |    否    | string                          | `release`    | 发布环境. 网关环境: test, prepub 与 release                      |
-| usagePlan      |    否    | [UsagePlan](#UsagePlan)         |              | 使用计划配置                                                     |
-| auth           |    否    | [ApuAuth](#ApiAuth)             |              | API 密钥配置                                                     |
-| customDomain   |    否    | [CustomDomain](#CustomDomain)[] |              | 自定义 API 域名配置                                              |
-| enableCORS     |    否    | boolean                         | `false`      | 开启跨域。默认值为否。                                           |
-| serviceTimeout |    否    | number                          | `15`         | Api 超时时间，单位: 秒                                           |
-| isDisabled     |    否    | boolean                         | `false`      | 关闭自动创建 API 网关功能。默认值为否，即默认自动创建 API 网关。 |
+| 参数名称        | 是否必选 | 类型                            | 默认值       | 描述                                                             |
+| --------------- | :------: | :------------------------------ | :----------- | :--------------------------------------------------------------- |
+| id              |    否    | string                          |              | API 网关服务 ID, 如果存在将使用这个 API 网关服务                 |
+| name            |    否    | string                          | `serverless` | API 网关服务名称, 默认创建一个新的服务名称                       |
+| description     |    否    | string                          | `serverless` | API 网关服务描述                                                 |
+| protocols       |    否    | string[]                        | `['http']`   | 前端请求的类型，如 http，https，http 与 https                    |
+| environment     |    否    | string                          | `release`    | 发布环境. 网关环境: test, prepub 与 release                      |
+| cors            |    否    | boolean                         | `false`      | 开启跨域。默认值为否。                                           |
+| timeout         |    否    | number                          | `15`         | Api 超时时间，单位: 秒                                           |
+| isDisabled      |    否    | boolean                         | `false`      | 关闭自动创建 API 网关功能。默认值为否，即默认自动创建 API 网关。 |
+| isBase64Encoded |    否    | Boolean                         | `false`      | 是否开启 Base64 编码，如果需要文件上传，请配置为 `true`          |
+| usagePlan       |    否    | [UsagePlan](#UsagePlan)         |              | 使用计划配置                                                     |
+| auth            |    否    | [ApuAuth](#ApiAuth)             |              | API 密钥配置                                                     |
+| customDomain    |    否    | [CustomDomain](#CustomDomain)[] |              | 自定义 API 域名配置                                              |
 
 ##### UsagePlan
 

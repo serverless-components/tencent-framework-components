@@ -178,18 +178,23 @@ export const formatInputs = (state: State, inputs: Partial<Inputs> = {}) => {
     };
   }
 
-  if (tempFunctionConf.vpcConfig) {
-    functionConf.vpcConfig = tempFunctionConf.vpcConfig;
+  if (tempFunctionConf.vpcConfig || tempFunctionConf.vpc) {
+    functionConf.vpcConfig = tempFunctionConf.vpcConfig || tempFunctionConf.vpc;
   }
 
   // 对apigw inputs进行标准化
   const tempApigwConf: ApigwInputs = inputs.apigatewayConf ?? ({} as any);
   const apigatewayConf: ApigwInputs = Object.assign(tempApigwConf, {
-    serviceId: tempApigwConf.serviceId ?? inputs.serviceId,
+    serviceId: tempApigwConf.serviceId ?? tempApigwConf.id ?? inputs.serviceId,
     region: region,
     isDisabled: tempApigwConf.isDisabled === true,
-    serviceName: tempApigwConf.serviceName ?? inputs.serviceName ?? getDefaultServiceName(),
-    serviceDesc: tempApigwConf.serviceDesc || getDefaultServiceDescription(),
+    serviceName:
+      tempApigwConf.serviceName ??
+      tempApigwConf.name ??
+      inputs.serviceName ??
+      getDefaultServiceName(),
+    serviceDesc:
+      tempApigwConf.serviceDesc ?? tempApigwConf.description ?? getDefaultServiceDescription(),
     protocols: tempApigwConf.protocols || ['http'],
     environment: tempApigwConf.environment ? tempApigwConf.environment : 'release',
     customDomains: tempApigwConf.customDomains || [],
@@ -199,10 +204,11 @@ export const formatInputs = (state: State, inputs: Partial<Inputs> = {}) => {
     apigatewayConf.endpoints = [
       {
         path: tempApigwConf.path || '/',
-        enableCORS: tempApigwConf.enableCORS,
-        serviceTimeout: tempApigwConf.serviceTimeout,
+        enableCORS: tempApigwConf.enableCORS ?? tempApigwConf.cors,
+        serviceTimeout: tempApigwConf.serviceTimeout ?? tempApigwConf.timeout,
         method: 'ANY',
         apiName: tempApigwConf.apiName || 'index',
+        isBase64Encoded: tempApigwConf.isBase64Encoded,
         function: {
           isIntegratedResponse: true,
           functionName: functionConf.name!,

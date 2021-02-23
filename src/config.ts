@@ -151,7 +151,7 @@ const frameworks: Record<Framework, { [prop: string]: any }> = {
       },
       {
         key: 'APP_STORAGE',
-        value: '/tmp',
+        value: '/tmp/storage',
       },
     ],
   },

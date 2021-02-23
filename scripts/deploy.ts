@@ -1,8 +1,8 @@
 import { join } from 'path';
 import * as dotenv from 'dotenv';
-import * as yargs from 'yargs';
 import * as ora from 'ora';
 import { execSync } from 'child_process';
+import { program } from 'commander';
 
 dotenv.config({
   path: join(__dirname, '..', '.env'),
@@ -19,6 +19,13 @@ import {
   generateYaml,
   isSupportFramework,
 } from './utils';
+
+interface DeployOptions {
+  version: string;
+  dev: string;
+  onlyBuild: boolean;
+  framework: string;
+}
 
 async function buildProject() {
   const buildPath = join(__dirname, '..', 'build');
@@ -87,27 +94,40 @@ async function deployComponent(
   return compConfig;
 }
 
-async function deploy() {
-  const { argv }: { argv: { [propName: string]: any } } = yargs(process.argv);
-
+async function deploy(options: DeployOptions) {
   const spinner = ora().start('Start deploying...\n');
 
   spinner.info(`[BUILD] Building project...`);
   await buildProject();
   spinner.succeed(`[BUILD] Build project success`);
 
-  if (argv.framework) {
-    const { framework } = argv;
+  if (options.framework) {
+    const { framework } = options;
     if (!isSupportFramework(framework)) {
       spinner.fail(`[ERROR] Unsupport framework ${framework}`);
     }
-    await deployComponent(framework as Framework, argv, spinner);
+    await deployComponent(framework as Framework, options, spinner);
   } else {
     for (let i = 0; i < FRAMEWORKS.length; i++) {
-      await deployComponent(FRAMEWORKS[i], argv, spinner);
+      await deployComponent(FRAMEWORKS[i], options, spinner);
     }
   }
   spinner.stop();
 }
 
-deploy();
+async function run() {
+  program
+    .command('deploy')
+    .description('Deploy http components')
+    .option('-f, --framework [framework]', 'specify framework to be deploy')
+    .option('-d, --dev [dev]', 'deploy dev version component')
+    .option('-v, --version [version]', 'component version')
+    .option('-ob, --onlyBuild [onlyBuild]', 'only build project', false)
+    .action((options) => {
+      deploy(options);
+    });
+
+  program.parse(process.argv);
+}
+
+run();

@@ -23,17 +23,22 @@ export interface ScfInputs {
   memorySize?: number;
   tags?: {}[];
   needSetTraffic?: boolean | string;
-  vpcConfig?: string;
+  vpcConfig?: { vpcId: string; subnetId: string };
+  vpc?: { vpcId: string; subnetId: string };
 }
 
 export interface ApigwInputs {
   oldState?: any;
 
   isDisabled?: boolean;
-  serviceId?: string;
 
-  serviceDesc?: string;
+  serviceId?: string;
   serviceName?: string;
+  serviceDesc?: string;
+  // new config
+  id?: string;
+  name?: string;
+  description?: string;
 
   environment?: 'prepub' | 'release' | 'test';
   customDomains?: {
@@ -50,17 +55,26 @@ export interface ApigwInputs {
 
   path?: string;
   enableCORS?: boolean;
+  cors?: boolean;
 
   serviceTimeout?: number;
+  timeout?: number;
   apiName?: string;
+
+  isBase64Encoded?: boolean;
 
   protocols: ('http' | 'https')[];
   endpoints: {
     path?: string;
     enableCORS?: boolean;
+    cors?: boolean;
     serviceTimeout?: number;
+    timeout?: number;
     method?: string;
     apiName?: string;
+    name?: string;
+    isBase64Encoded?: boolean;
+    isBase64Trigger?: { [propName: string]: any };
 
     function?: {
       isIntegratedResponse?: boolean;
