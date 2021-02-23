@@ -11,3 +11,5 @@ build
 src/_shims
 src/_fixtures
 examples
+
+src/typings/serverless-core.d.ts

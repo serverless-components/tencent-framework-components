@@ -21,7 +21,7 @@ import {
 } from './utils';
 
 interface DeployOptions {
-  version: string;
+  ver: string;
   dev: string;
   onlyBuild: boolean;
   framework: string;
@@ -75,8 +75,8 @@ async function deployComponent(
   const { version } = parseYaml(VERSION_YAML_PATH);
   const compConfig = getComponentConfig(framework, version);
 
-  if (options.version) {
-    compConfig.version = options.version;
+  if (options.ver) {
+    compConfig.version = options.ver;
   }
   if (options.dev) {
     compConfig.version = 'dev';
@@ -121,7 +121,7 @@ async function run() {
     .description('Deploy http components')
     .option('-f, --framework [framework]', 'specify framework to be deploy')
     .option('-d, --dev [dev]', 'deploy dev version component')
-    .option('-v, --version [version]', 'component version')
+    .option('-v, --ver [ver]', 'component version')
     .option('-ob, --onlyBuild [onlyBuild]', 'only build project', false)
     .action((options) => {
       deploy(options);
