@@ -9,6 +9,14 @@ import { ScfInputs } from './interface';
 import { getConfig } from './config';
 const CONFIGS = getConfig();
 
+export function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, ms);
+  });
+}
+
 export const generateId = () =>
   Math.random()
     .toString(36)

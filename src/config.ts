@@ -251,7 +251,7 @@ export const getConfig = (): FrameworkConfig => {
     // framework.yml 会在组件部署流程中动态生成
     fs.readFileSync(path.join(__dirname, 'framework.yml'), 'utf-8'),
   ) as { name: Framework };
-  const templateUrl = `${TEMPLATE_BASE_URL}/${framework}-deme.zip`;
+  const templateUrl = `${TEMPLATE_BASE_URL}/${framework}-demo.zip`;
   const frameworkConfigs = frameworks[framework];
   return {
     framework,

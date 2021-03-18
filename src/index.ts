@@ -1,7 +1,7 @@
 import { Component } from '@serverless/core';
 import { Scf, Apigw, Metrics, Cos, Cdn } from 'tencent-component-toolkit';
 import { ApiTypeError } from 'tencent-component-toolkit/lib/utils/error';
-import { deepClone, getCodeZipPath, getDefaultProtocol, getInjection } from './utils';
+import { sleep, deepClone, getCodeZipPath, getDefaultProtocol, getInjection } from './utils';
 import { formatInputs, formatStaticCosInputs, formatStaticCdnInputs } from './formatter';
 
 import {
@@ -221,6 +221,9 @@ export class ServerlessComponent extends Component<State> {
         bucket,
         policy,
       });
+      // 创建 COS 桶后等待1s，防止偶发出现桶不存在错误
+      await sleep(1000);
+
       // flush bucket
       if (inputs.cosConf.replace) {
         await cos.flushBucketFiles(bucket);
