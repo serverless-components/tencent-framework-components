@@ -72,7 +72,7 @@ async function deployComponent(
   spinner.info(`[${framework}] Copying extra files for component ${framework}...`);
   await copyExtraFiles(framework);
 
-  spinner.info(`[${framework}] Generate config file for compooent ${framework}...`);
+  spinner.info(`[${framework}] Generate config file for component ${framework}...`);
   await generateFrameworkYaml(framework);
 
   const versions = parseYaml(VERSION_YAML_PATH);
@@ -87,12 +87,12 @@ async function deployComponent(
   }
 
   try {
-    spinner.info(`[${framework}] Publishing compooent ${framework}@${compConfig.version}...`);
+    spinner.info(`[${framework}] Publishing component ${framework}@${compConfig.version}...`);
     await publishComponent(compConfig);
-    spinner.succeed(`[${framework}] Publish compooent ${framework}@${compConfig.version} success`);
+    spinner.succeed(`[${framework}] Publish component ${framework}@${compConfig.version} success`);
   } catch (e) {
     spinner.warn(
-      `[${framework}] Publish compooent ${framework}@${compConfig.version} error: ${e.message}`,
+      `[${framework}] Publish component ${framework}@${compConfig.version} error: ${e.message}`,
     );
   }
   return compConfig;
