@@ -1,9 +1,7 @@
 app: appDemo
 stage: dev
-
-component: koa@dev
+component: koa
 name: koaDemo
-
 inputs:
   src:
     src: ./

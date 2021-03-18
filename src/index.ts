@@ -196,7 +196,7 @@ export class ServerlessComponent extends Component<State> {
     if (zipPath) {
       console.log(`Deploying static files`);
       // 1. deploy to cos
-      const { staticCosInputs, bucket } = await formatStaticCosInputs(
+      const { staticCosInputs, bucket, policy } = await formatStaticCosInputs(
         inputs.cosConf,
         appId,
         zipPath,
@@ -207,9 +207,20 @@ export class ServerlessComponent extends Component<State> {
 
       const cosOutput: StaticCosOutput = {
         region,
-        cosOrigin: '',
-        bucket: '',
+        bucket,
+        cosOrigin: `${bucket}.cos.${region}.myqcloud.com`,
+        url: `https://${bucket}.cos.${region}.myqcloud.com`,
       };
+      // try to create bucket
+      await cos.createBucket({
+        bucket,
+        force: true,
+      });
+      // set public access policy
+      await cos.setPolicy({
+        bucket,
+        policy,
+      });
       // flush bucket
       if (inputs.cosConf.replace) {
         await cos.flushBucketFiles(bucket);
@@ -218,13 +229,17 @@ export class ServerlessComponent extends Component<State> {
       }
       for (let i = 0; i < staticCosInputs.length; i++) {
         const curInputs = staticCosInputs[i];
-        console.log(`Starting deploy directory ${curInputs.src} to cos bucket ${curInputs.bucket}`);
-        const deployRes = await cos.deploy(curInputs);
-        cosOutput.cosOrigin = `${curInputs.bucket}.cos.${region}.myqcloud.com`;
-        cosOutput.bucket = deployRes.bucket;
-        cosOutput.url = `https://${curInputs.bucket}.cos.${region}.myqcloud.com`;
-        console.log(`Deploy directory ${curInputs.src} to cos bucket ${curInputs.bucket} success`);
+        console.log(`Starting upload directory ${curInputs.src} to cos bucket ${curInputs.bucket}`);
+
+        await cos.upload({
+          bucket,
+          dir: curInputs.src,
+          keyPrefix: curInputs.keyPrefix,
+        });
+
+        console.log(`Upload directory ${curInputs.src} to cos bucket ${curInputs.bucket} success`);
       }
+
       deployStaticOutputs.cos = cosOutput;
 
       // 2. deploy cdn
@@ -333,26 +348,38 @@ export class ServerlessComponent extends Component<State> {
 
     const { state } = this;
     const { region } = state;
+    const {
+      namespace,
+      functionName,
+      created,
+      serviceId,
+      apigwDisabled,
+      customDomains,
+      apiList,
+      environment,
+    } = state;
 
     const credentials = this.getCredentials();
 
     // if disable apigw, no need to remove
-    if (state.apigwDisabled !== true) {
+    if (apigwDisabled !== true && serviceId) {
       const apigw = new Apigw(credentials, region);
       await apigw.remove({
-        created: state.created,
-        environment: state.environment,
-        serviceId: state.serviceId,
-        apiList: state.apiList,
-        customDomains: state.customDomains,
+        created,
+        environment,
+        serviceId,
+        apiList,
+        customDomains,
       });
     }
 
-    const scf = new Scf(credentials, region);
-    await scf.remove({
-      functionName: state.functionName,
-      namespace: state.namespace,
-    });
+    if (functionName) {
+      const scf = new Scf(credentials, region);
+      await scf.remove({
+        functionName,
+        namespace,
+      });
+    }
 
     // remove static
     await this.removeStatic();

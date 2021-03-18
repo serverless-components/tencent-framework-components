@@ -1,9 +1,7 @@
 app: appDemo
 stage: dev
-
-component: egg@dev
+component: egg
 name: eggDemo
-
 inputs:
   src:
     src: ./
@@ -11,6 +9,7 @@ inputs:
       - .env
   functionConf:
     name: ${name}
+    namespace: test
   apigatewayConf:
     protocols:
       - http

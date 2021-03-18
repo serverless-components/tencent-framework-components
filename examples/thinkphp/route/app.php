@@ -13,3 +13,9 @@ use think\facade\Route;
 Route::get('/', 'index/index');
 
 Route::get('hello/:name', 'index/hello');
+
+Route::get('posts', 'index/getPosts');
+
+Route::post('posts', 'index/createPost');
+
+Route::post('upload', 'index/upload');

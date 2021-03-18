@@ -1,18 +1,14 @@
 app: appDemo
 stage: dev
-
-component: django@dev
+component: django
 name: djangoDemo
-
 inputs:
   src:
-    # TODO: 安装python项目依赖到项目当前目录
-    hook: 'pip3 install -r requirements.txt -t ./'
+    hook: pip3 install -r requirements.txt -t ./
     dist: ./
     exclude:
       - .env
-      - 'requirements/**'
-      - '__pycache__/**'
+      - __pycache__/**
   region: ap-guangzhou
   functionConf:
     projectName: djangodemo

@@ -117,7 +117,7 @@ def handle_request(app, event, context):
         .get(u"principalId", ""),
         "REQUEST_METHOD": event["httpMethod"],
         "SCRIPT_NAME": script_name,
-        "SERVER_NAME": headers.get(u"Host", "lambda"),
+        "SERVER_NAME": headers.get(u"Host", "Serverless"),
         "SERVER_PORT": headers.get(u"X-Forwarded-Port", "80"),
         "SERVER_PROTOCOL": "HTTP/1.1",
         "wsgi.errors": sys.stderr,

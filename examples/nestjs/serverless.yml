@@ -1,9 +1,7 @@
 app: appDemo
 stage: dev
-
-component: nestjs@dev
+component: nestjs
 name: nestDemo
-
 inputs:
   src:
     src: ./

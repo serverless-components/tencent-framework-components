@@ -1,9 +1,7 @@
 app: appDemo
 stage: dev
-
-component: nuxtjs@dev
+component: nuxtjs
 name: nuxtjsDemo
-
 inputs:
   src:
     hook: npm run build

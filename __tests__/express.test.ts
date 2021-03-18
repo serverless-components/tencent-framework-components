@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { generateId, getServerlessSdk } from './lib/utils';
-import { execSync } from 'child_process';
+import { spawnSync } from 'child_process';
 import axios from 'axios';
 import { Inputs } from '../src/interface';
 
@@ -47,14 +47,14 @@ describe('Express', () => {
 
   it('update source code', async () => {
     const srcPath = join(__dirname, '..', 'examples/express');
-    execSync('npm install', { cwd: srcPath });
+    spawnSync('npm', ['install'], { cwd: srcPath });
 
     instanceYaml.inputs.src = srcPath;
 
     const instance = await sdk.deploy(instanceYaml, credentials);
     const response = await axios.get(instance.outputs.apigw.url);
 
-    expect(response.data.includes('Serverless Framework')).toBeTruthy();
+    expect(response.data.includes('腾讯云')).toBeTruthy();
     expect(instance.outputs.templateUrl).not.toBeDefined();
   });
 

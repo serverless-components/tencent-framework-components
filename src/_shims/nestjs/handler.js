@@ -3,12 +3,16 @@ const { createServer, proxy } = require('tencent-serverless-http')
 const userSls = path.join(__dirname, '..', 'sls.js')
 const getApp = require(userSls)
 
+let app
 let server
 
 exports.handler = async (event, context) => {
-  const nestApp = await getApp()
-  await nestApp.init()
-  const app = nestApp.getHttpAdapter().getInstance()
+  // cache nestjs application
+  if (!app) {
+    const nestApp = await getApp()
+    await nestApp.init()
+    app = nestApp.getHttpAdapter().getInstance()
+  }
 
   // attach event and context to request
   try {
@@ -25,7 +29,11 @@ exports.handler = async (event, context) => {
 
   // cache server, not create repeatly
   if (!server) {
-    server = createServer(app, null, app.binaryTypes || [])
+    server = createServer(
+      app.callback && typeof app.callback === 'function' ? app.callback() : app,
+      null,
+      app.binaryTypes || []
+    )
   }
 
   context.callbackWaitsForEmptyEventLoop = app.callbackWaitsForEmptyEventLoop === true

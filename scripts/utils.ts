@@ -1,5 +1,5 @@
 import * as YAML from 'js-yaml';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, rmSync } from 'fs';
 import * as fse from 'fs-extra';
 import { Framework, ComponentConfig } from '../typings';
 import { COMPONENT_CODE_PATH } from './config';
@@ -48,9 +48,9 @@ export function getComponentConfig(framework: Framework, version: string): Compo
   };
 }
 
-export function parseYaml(filename: string): { version: string } {
+export function parseYaml(filename: string): Record<string, any> {
   const content = readFileSync(filename, 'utf-8');
-  return YAML.load(content) as { version: string };
+  return YAML.load(content) as Record<string, any>;
 }
 
 export function generateYaml(filename: string, obj: { [propName: string]: any } | string) {
@@ -93,11 +93,8 @@ export function copySync(source: string, dest: string) {
 }
 
 export async function rmdirSync(source: string) {
-  fse.rmdirSync(source, {
+  rmSync(source, {
     recursive: true,
+    force: true,
   });
-  // fs.rmSync(source, {
-  //   recursive: true,
-  //   force: true,
-  // });
 }

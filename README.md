@@ -157,6 +157,10 @@ TENCENT_SECRET_ID=123
 TENCENT_SECRET_KEY=123
 ```
 
+## 本地开发组件
+
+参考 [开发文档](./docs/develop.md)
+
 ## License
 
 MIT License

@@ -13,7 +13,6 @@ name: webDemo # 必选) 组件实例名称.
 
 inputs:
   region: ap-guangzhou # 云函数所在区域
-  entryFile: sls.js # 自定义 server 的入口文件名，默认为 sls.js，如果不想修改文件名为 sls.js 可以自定义
   src: # 部署src下的文件代码，并打包成zip上传到bucket上
     src: ./ # 本地需要打包的文件目录
     exclude: # 被排除的文件或目录
@@ -23,6 +22,7 @@ inputs:
   #   bucket: bucket01 # bucket name，当前会默认在bucket name后增加 appid 后缀, 本例中为 bucket01-appid
   #   object: cos.zip  # bucket key 指定存储桶内的文件
   functionConf: # 函数配置相关
+    entryFile: sls.js # 自定义 server 的入口文件名，默认为 sls.js，如果不想修改文件名为 sls.js 可以自定义
     projectName: djangodemo # 只有 django 组件配置必须
     name: webDemo # 云函数名称
     runtime: Nodejs10.15 # 运行环境
@@ -106,7 +106,7 @@ inputs:
 - [x] laravel
 - [x] thinkphp
 
-> 注意：`entryFile` 仅 `Nodejs` 框架组件支持，`funcitonConf.projectName` 仅 `Django` 框架支持
+> 注意：`entryFile` 仅 `Node.js` 框架组件支持，`funcitonConf.projectName` 仅 `Django` 框架支持
 
 ## inputs 配置参数
 
@@ -300,14 +300,14 @@ area: mainland domain: cnode.yuga.chat autoRefresh: true refreshType: delete
 forceRedirect: switch: on redirectType: https redirectStatusCode: 301 https:
 http2: on certId: 'eGkM75xv'
 
-| 参数名称      | 是否必选 |              类型               |   默认值   | 描述                                                       |
-| ------------- | :------: | :-----------------------------: | :--------: | :--------------------------------------------------------- |
-| domain        |    是    |             string              |            | CDN 域名                                                   |
-| area          |    否    |             string              | `mainland` | 加速区域，mainland: 大陆，overseas：海外，global：全球加速 |
-| autoRefresh   |    否    |             boolean             |   `true`   | 是否自动刷新 CDN                                           |
-| refreshType   |    否    |             boolean             |  `delete`  | CDN 刷新类型，delete：刷新全部资源，flush：刷新变更资源    |
-| forceRedirect |    否    | [ForceRedirect](#ForceRedirect) |            | 访问协议强制跳转配置                                       |
-| https         |    否    |         [Https](#Https)         |            | https 配置                                                 |
+| 参数名称      | 是否必选 |              类型               |   默认值   | 描述                                                                                        |
+| ------------- | :------: | :-----------------------------: | :--------: | :------------------------------------------------------------------------------------------ |
+| domain        |    是    |             string              |            | CDN 域名                                                                                    |
+| area          |    否    |             string              | `mainland` | 加速区域，mainland: 大陆，overseas：海外，global：全球加速                                  |
+| onlyRefresh   |    否    |             boolean             |  `false`   | 是否仅刷新 CDN，第一次部署 CDN 后，如果没有修改 CDN 配置，可以配置此项 `true`，节省部署时间 |
+| refreshType   |    否    |             boolean             |  `delete`  | CDN 刷新类型，delete：刷新全部资源，flush：刷新变更资源                                     |
+| forceRedirect |    否    | [ForceRedirect](#ForceRedirect) |            | 访问协议强制跳转配置                                                                        |
+| https         |    否    |         [Https](#Https)         |            | https 配置                                                                                  |
 
 ###### ForceRedirect
 

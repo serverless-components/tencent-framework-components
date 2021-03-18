@@ -1,9 +1,7 @@
 app: appDemo
 stage: dev
-
-component: thinkphp@dev
+component: thinkphp
 name: thinkphpDemo
-
 inputs:
   src: ./
   region: ap-guangzhou
@@ -18,3 +16,4 @@ inputs:
       - http
       - https
     environment: release
+    isBase64Encoded: true

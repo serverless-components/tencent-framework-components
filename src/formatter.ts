@@ -48,8 +48,6 @@ export const formatStaticCosInputs = async (
           bucket: `${bucketName}-${appId}`,
           src: `${staticPath}/${entryName}`,
           keyPrefix: curSource.targetDir || '/',
-          // 通过设置 policy 来支持公网访问
-          policy: CONFIGS.getPolicy(region, bucket, appId),
         };
 
         staticCosInputs.push(cosInputs);
@@ -58,6 +56,8 @@ export const formatStaticCosInputs = async (
     return {
       bucket: `${bucketName}-${appId}`,
       staticCosInputs,
+      // 通过设置 policy 来支持公网访问
+      policy: CONFIGS.getPolicy(region, bucket, appId),
     };
   } catch (e) {
     throw new ApiTypeError(
@@ -79,6 +79,7 @@ export const formatStaticCdnInputs = async (cdnConf: CdnInputs, origin: string) 
       originType: 'cos',
       originPullProtocol: 'https',
     },
+    onlyRefresh: cdnConf.onlyRefresh,
   };
   if (cdnConf.https) {
     // using these default configs, for making user's config more simple

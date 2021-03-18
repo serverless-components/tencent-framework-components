@@ -1,9 +1,7 @@
 app: appDemo
 stage: dev
-
-component: express@dev
+component: express
 name: expressDemo
-
 inputs:
   src:
     src: ./

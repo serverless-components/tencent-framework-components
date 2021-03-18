@@ -1,9 +1,7 @@
 app: appDemo
 stage: dev
-
-component: laravel@dev
+component: laravel
 name: laravelDemo
-
 inputs:
   src: ./
   region: ap-guangzhou

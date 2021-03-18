@@ -24,3 +24,13 @@ export interface ComponentConfig {
   webDeployable: boolean;
   src: string;
 }
+
+export interface ServerlessConfig {
+  app?: string;
+  stage?: string;
+
+  component: string;
+  name: string;
+
+  inputs: Record<string, string>;
+}

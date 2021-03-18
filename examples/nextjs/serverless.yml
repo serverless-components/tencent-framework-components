@@ -1,9 +1,7 @@
 app: appDemo
 stage: dev
-
-component: nextjs@dev
+component: nextjs
 name: nextjsDemo
-
 inputs:
   src:
     hook: npm run build

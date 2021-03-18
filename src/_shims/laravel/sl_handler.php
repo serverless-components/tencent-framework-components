@@ -2,7 +2,6 @@
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 
 define('LARAVEL_START', microtime(true));
 define('TEXT_REG', '#\.html.*|\.js.*|\.css.*|\.html.*#');
@@ -80,6 +79,8 @@ function initEnvironment($isBase64Encoded)
 
 function decodeFormData($rawData)
 {
+  require_once __DIR__ . '/sl_arr.php';
+
   $files = array();
   $data = array();
   $boundary = substr($rawData, 0, strpos($rawData, "\r\n"));
@@ -110,7 +111,7 @@ function decodeFormData($rawData)
       // consoleLog('Upload Filename', $fileName);
       // If we have a file, save it. Otherwise, save the data.
       if ($fileName !== null) {
-        $localFileName = tempnam('/tmp', 'sfy');
+        $localFileName = tempnam('/tmp', 'sls');
         file_put_contents($localFileName, $content);
 
         $arr = array(
@@ -150,6 +151,15 @@ function decodeFormData($rawData)
   ]);
 }
 
+function getHeadersContentType($headers) {
+  if (isset($headers['Content-Type'])) {
+    return $headers['Content-Type'];
+  } else if (isset($headers['content-type'])) {
+    return $headers['content-type'];
+  }
+  return '';
+}
+
 function handler($event, $context)
 {
   require __DIR__ . '/vendor/autoload.php';
@@ -187,10 +197,10 @@ function handler($event, $context)
     if ($isBase64Encoded) {
       $rawBody = base64_decode($rawBody);
     }
-    $contentType = $headers['Content-Type'] ?? $headers['content-type'];
+    $contentType = getHeadersContentType($headers);
     if (preg_match('/multipart\/form-data/', $contentType)) {
       $requestData = !empty($rawBody) ? decodeFormData($rawBody) : [];
-      consoleLog('Post File', $requestData);
+      // consoleLog('Post File', $requestData);
       $data = $requestData->data;
       $files = $requestData->files;
     } else if (preg_match('/application\/x-www-form-urlencoded/', $contentType)) {
@@ -226,6 +236,6 @@ function handler($event, $context)
     'headers' => [
       'Content-Type' => $contentType
     ],
-    'body' => $isBase64Encoded ? base64_encode(($body)) : $body
+    'body' => $isBase64Encoded ? base64_encode($body) : $body
   ];
 }

@@ -16,14 +16,19 @@ export default {
    ** Headers of the page
    */
   head: {
-    title: 'Serverless Nuxt.js Application',
+    title: 'Serverless - Nuxt.js Application',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       {
         hid: 'description',
         name: 'description',
-        content: 'Serverless Nuxt.js Application Created By Serverless Framework'
+        content: 'Serverless Nuxt.js 应用'
+      },
+      {
+        hid: 'keywords',
+        name: 'keywords',
+        content: 'nuxt,nuxt.js,serverless,无服务'
       }
     ],
     link: [

@@ -124,6 +124,7 @@ export interface CdnInputs {
   domain: string;
   area?: string;
   autoRefresh?: boolean;
+  onlyRefresh?: boolean;
   refreshType?: string;
   forceRedirect?: {
     switch?: 'on' | 'off' | undefined;

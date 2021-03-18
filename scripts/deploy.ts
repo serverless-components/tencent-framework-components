@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 import * as ora from 'ora';
 import { execSync } from 'child_process';
 import { program } from 'commander';
+import { prompt } from 'inquirer';
 
 dotenv.config({
   path: join(__dirname, '..', '.env'),
@@ -21,10 +22,12 @@ import {
 } from './utils';
 
 interface DeployOptions {
-  ver: string;
-  dev: string;
-  onlyBuild: boolean;
-  framework: string;
+  env: string; // 需要部署的环境，默认为 prod
+  ver: string; // 需要部署的版本
+  dev: string; // 是否部署 dev 版本
+  onlyBuild: boolean; // 是否仅构建项目
+  framework: string; // 指定框架
+  all: boolean; // 部署所有框架
 }
 
 async function buildProject() {
@@ -72,7 +75,8 @@ async function deployComponent(
   spinner.info(`[${framework}] Generate config file for compooent ${framework}...`);
   await generateFrameworkYaml(framework);
 
-  const { version } = parseYaml(VERSION_YAML_PATH);
+  const versions = parseYaml(VERSION_YAML_PATH);
+  const version = versions[framework];
   const compConfig = getComponentConfig(framework, version);
 
   if (options.ver) {
@@ -94,33 +98,63 @@ async function deployComponent(
   return compConfig;
 }
 
-async function deploy(options: DeployOptions) {
-  const spinner = ora().start('Start deploying...\n');
+async function startDeploy(frameworks: Framework[], options: DeployOptions) {
+  const stage = options.env || 'dev';
+  process.env.SERVERLESS_PLATFORM_STAGE = stage;
 
+  const spinner = ora().start();
+
+  spinner.info(`Start deploying (${stage})...`);
   spinner.info(`[BUILD] Building project...`);
   await buildProject();
   spinner.succeed(`[BUILD] Build project success`);
 
+  if (options.onlyBuild) {
+    spinner.stop();
+    return;
+  }
+
+  for (let i = 0; i < frameworks.length; i++) {
+    await deployComponent(frameworks[i], options, spinner);
+  }
+
+  spinner.stop();
+}
+
+async function deploy(options: DeployOptions) {
+  let frameworks: Framework[];
   if (options.framework) {
     const { framework } = options;
     if (!isSupportFramework(framework)) {
-      spinner.fail(`[ERROR] Unsupport framework ${framework}`);
+      console.error(`[ERROR] Unsupport framework ${framework}`);
+      return;
     }
-    await deployComponent(framework as Framework, options, spinner);
+    frameworks = [framework] as Framework[];
+  } else if (options.all) {
+    frameworks = FRAMEWORKS;
   } else {
-    for (let i = 0; i < FRAMEWORKS.length; i++) {
-      await deployComponent(FRAMEWORKS[i], options, spinner);
-    }
+    // ask to select framework
+    const anwsers = await prompt([
+      {
+        type: 'checkbox',
+        name: 'frameworks',
+        message: 'Please select framework to be deploy?',
+        choices: FRAMEWORKS,
+      },
+    ]);
+    frameworks = anwsers.frameworks as Framework[];
   }
-  spinner.stop();
+
+  await startDeploy(frameworks, options);
 }
 
 async function run() {
   program
-    .command('deploy')
     .description('Deploy http components')
     .option('-f, --framework [framework]', 'specify framework to be deploy')
+    .option('-a, --all [all]', 'specify all frameworks to be deploy')
     .option('-d, --dev [dev]', 'deploy dev version component')
+    .option('-e, --env [env]', 'specify deploy environment: prod,dev', 'dev')
     .option('-v, --ver [ver]', 'component version')
     .option('-ob, --onlyBuild [onlyBuild]', 'only build project', false)
     .action((options) => {
