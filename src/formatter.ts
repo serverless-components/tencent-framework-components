@@ -143,19 +143,18 @@ export const formatInputs = (state: State, inputs: Partial<Inputs> = {}) => {
   });
 
   const entryFile = inputs.entryFile || CONFIGS.defaultEntryFile;
-  functionConf.environment = {
-    variables: entryFile
-      ? {
-          SLS_ENTRY_FILE: entryFile,
-        }
-      : {},
-  };
   const { defaultEnvs } = CONFIGS;
+  if (!functionConf.environment?.variables) {
+    functionConf.environment = {
+      variables: {},
+    };
+  }
   defaultEnvs.forEach((item) => {
-    if (functionConf.environment?.variables) {
-      functionConf.environment.variables[item.key] = item.value;
-    }
+    functionConf.environment!.variables![item.key] = item.value;
   });
+  if (entryFile) {
+    functionConf.environment!.variables!['SLS_ENTRY_FILE'] = entryFile;
+  }
 
   // django 项目需要 projectName
   if (CONFIGS.framework === 'django') {
@@ -171,13 +170,6 @@ export const formatInputs = (state: State, inputs: Partial<Inputs> = {}) => {
     validateTraffic(inputs.traffic);
   }
   functionConf.needSetTraffic = inputs.traffic !== undefined && functionConf.lastVersion;
-
-  if (tempFunctionConf.environment?.variables) {
-    functionConf.environment.variables = {
-      ...functionConf.environment.variables,
-      ...(tempFunctionConf.environment.variables || {}),
-    };
-  }
 
   if (tempFunctionConf.vpcConfig || tempFunctionConf.vpc) {
     functionConf.vpcConfig = tempFunctionConf.vpcConfig || tempFunctionConf.vpc;
