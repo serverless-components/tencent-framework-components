@@ -1,10 +1,10 @@
-import { join } from 'path';
+// import { join } from 'path';
 import * as ora from 'ora';
 import { program } from 'commander';
 import { prompt } from 'inquirer';
-import { inc as semverInc } from 'semver';
+import { inc as semverInc, ReleaseType } from 'semver';
 
-import { Framework, ServerlessConfig } from '../typings';
+import { Framework } from '../typings';
 import { VERSION_YAML_PATH, FRAMEWORKS } from './config';
 import { parseYaml, generateYaml, isSupportFramework } from './utils';
 
@@ -16,64 +16,57 @@ interface DeployOptions {
   example: boolean;
 }
 
-async function changeExampleVersion(
-  framework: Framework,
-  options: { [propName: string]: any },
-  spinner: ora.Ora,
-) {
-  const exampleYamlPath = join(__dirname, '..', 'examples', framework, 'serverless.yml');
-  const yamlConfig = parseYaml(exampleYamlPath) as ServerlessConfig;
-  if (options.dev) {
-    yamlConfig.component = `${framework}@dev`;
-  } else {
-    yamlConfig.component = framework;
-  }
+// async function changeExampleVersion(
+//   framework: Framework,
+//   options: { [propName: string]: any },
+//   spinner: ora.Ora,
+// ) {
+//   const exampleYamlPath = join(__dirname, '..', 'examples', framework, 'serverless.yml');
+//   const yamlConfig = parseYaml(exampleYamlPath) as ServerlessConfig;
+//   if (options.dev) {
+//     yamlConfig.component = `${framework}@dev`;
+//   } else {
+//     yamlConfig.component = framework;
+//   }
 
-  spinner.info(`[${framework}] Change version for component ${framework}...`);
-  await generateYaml(exampleYamlPath, yamlConfig);
+//   spinner.info(`[${framework}] Change version for component ${framework}...`);
+//   await generateYaml(exampleYamlPath, yamlConfig);
 
-  spinner.info(`[${framework}] Change version for component ${framework} success`);
-}
-
-async function changeVersion(
-  framework: Framework,
-  options: { [propName: string]: any },
-  spinner: ora.Ora,
-) {
-  spinner.info(`[${framework}] Change version for component ${framework}...`);
-  const versions = parseYaml(VERSION_YAML_PATH);
-  const version = versions[framework];
-
-  if (options.dev) {
-    versions[framework] = 'dev';
-  } else if (options.ver) {
-    versions[framework] = options.ver;
-  } else {
-    const { type } = await prompt([
-      {
-        type: 'list',
-        name: 'type',
-        message: 'Please select version type?',
-        choices: ['patch', 'minor', 'major'],
-      },
-    ]);
-    const newVersion = semverInc(version, type);
-    versions[framework] = newVersion;
-  }
-
-  await generateYaml(VERSION_YAML_PATH, versions);
-  spinner.info(`[${framework}] Change version for component ${framework} success`);
-}
+//   spinner.info(`[${framework}] Change version for component ${framework} success`);
+// }
 
 async function start(frameworks: Framework[], options: DeployOptions) {
   const spinner = ora().start(`Start changing...\n`);
 
+  const versions = parseYaml(VERSION_YAML_PATH) as Record<Framework, string>;
+
+  let versionType: ReleaseType | undefined = undefined;
+  let version = '';
+  if (options.dev) {
+    version = 'dev';
+  } else if (options.ver) {
+    version = options.ver;
+  } else {
+    spinner.info('No version is specified');
+    const { type } = await prompt([
+      {
+        type: 'list',
+        name: 'type',
+        message: 'Please select version type ?',
+        choices: ['patch', 'minor', 'major'],
+      },
+    ]);
+    versionType = type;
+  }
+
   for (let i = 0; i < frameworks.length; i++) {
-    if (options.example) {
-      await changeExampleVersion(frameworks[i], options, spinner);
-    } else {
-      await changeVersion(frameworks[i], options, spinner);
+    const curFramework = frameworks[i];
+    const curVersion = versions[curFramework];
+    if (versionType) {
+      version = semverInc(curVersion, versionType) as string;
     }
+    versions[curFramework] = version;
+    await generateYaml(VERSION_YAML_PATH, versions);
   }
 
   spinner.stop();

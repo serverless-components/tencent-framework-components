@@ -57,7 +57,7 @@ export const formatStaticCosInputs = async (
       bucket: `${bucketName}-${appId}`,
       staticCosInputs,
       // 通过设置 policy 来支持公网访问
-      policy: CONFIGS.getPolicy(region, bucket, appId),
+      policy: CONFIGS.getPolicy(region, `${bucketName}-${appId}`, appId),
     };
   } catch (e) {
     throw new ApiTypeError(

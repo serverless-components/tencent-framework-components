@@ -238,7 +238,7 @@ const CONFIGS: DefaultConfig = {
             'name/cos:HeadObject',
             'name/cos:OptionsObject',
           ],
-          Resource: [`qcs::cos:${region}:uid/${appid}:${bucket}-${appid}/*`],
+          Resource: [`qcs::cos:${region}:uid/${appid}:${bucket}/*`],
         },
       ],
       version: '2.0',
