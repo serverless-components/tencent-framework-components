@@ -139,6 +139,16 @@ export interface StaticInputs {
   cdnConf?: CdnInputs;
 }
 
+export interface SrcObject {
+  src?: string;
+  dist?: string;
+  hook?: string;
+  exclude?: string[];
+  targetDir?: string;
+  bucket?: string;
+  object?: string;
+}
+
 export interface Inputs {
   entryFile?: string;
   projectName?: string;
@@ -150,7 +160,7 @@ export interface Inputs {
   serviceName?: string;
 
   region?: string;
-  src?: string;
+  src?: string | SrcObject;
   role?: string;
   handler?: string;
   runtime?: string;

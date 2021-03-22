@@ -8,34 +8,15 @@ import { Framework } from '../typings';
 import { VERSION_YAML_PATH, FRAMEWORKS } from './config';
 import { parseYaml, generateYaml, isSupportFramework } from './utils';
 
-interface DeployOptions {
+interface Options {
   ver: string;
   dev: string;
   framework: string;
   all: boolean;
-  example: boolean;
+  type: ReleaseType;
 }
 
-// async function changeExampleVersion(
-//   framework: Framework,
-//   options: { [propName: string]: any },
-//   spinner: ora.Ora,
-// ) {
-//   const exampleYamlPath = join(__dirname, '..', 'examples', framework, 'serverless.yml');
-//   const yamlConfig = parseYaml(exampleYamlPath) as ServerlessConfig;
-//   if (options.dev) {
-//     yamlConfig.component = `${framework}@dev`;
-//   } else {
-//     yamlConfig.component = framework;
-//   }
-
-//   spinner.info(`[${framework}] Change version for component ${framework}...`);
-//   await generateYaml(exampleYamlPath, yamlConfig);
-
-//   spinner.info(`[${framework}] Change version for component ${framework} success`);
-// }
-
-async function start(frameworks: Framework[], options: DeployOptions) {
+async function start(frameworks: Framework[], options: Options) {
   const spinner = ora().start(`Start changing...\n`);
 
   const versions = parseYaml(VERSION_YAML_PATH) as Record<Framework, string>;
@@ -47,16 +28,20 @@ async function start(frameworks: Framework[], options: DeployOptions) {
   } else if (options.ver) {
     version = options.ver;
   } else {
-    spinner.info('No version is specified');
-    const { type } = await prompt([
-      {
-        type: 'list',
-        name: 'type',
-        message: 'Please select version type ?',
-        choices: ['patch', 'minor', 'major'],
-      },
-    ]);
-    versionType = type;
+    if (!options.type) {
+      spinner.info('No version is specified');
+      const { type } = await prompt([
+        {
+          type: 'list',
+          name: 'type',
+          message: 'Please select version type ?',
+          choices: ['patch', 'minor', 'major'],
+        },
+      ]);
+      versionType = type;
+    } else {
+      versionType = options.type;
+    }
   }
 
   for (let i = 0; i < frameworks.length; i++) {
@@ -72,7 +57,7 @@ async function start(frameworks: Framework[], options: DeployOptions) {
   spinner.stop();
 }
 
-async function change(options: DeployOptions) {
+async function change(options: Options) {
   let frameworks: Framework[];
   if (options.framework) {
     const { framework } = options;
@@ -103,10 +88,9 @@ async function change(options: DeployOptions) {
 
 async function run() {
   program
-    .description('Deploy http components')
+    .description('Change component version')
     .option('-f, --framework [framework]', 'specify framework to be deploy')
     .option('-t, --type [type]', 'chagne version type')
-    .option('-e, --example [example]', 'chagne version config for example')
     .option('-a, --all [all]', 'specify all frameworks to be deploy')
     .option('-v, --ver [ver]', 'specify version for component')
     .option('-d, --dev [dev]', 'deploy dev version component')

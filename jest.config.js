@@ -9,7 +9,7 @@ const config = {
   },
   testTimeout: 600000,
   testEnvironment: 'node',
-  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(js|ts)$',
+  testRegex: '/__tests__/.*\\.(test|spec)\\.(js|ts)$',
   testPathIgnorePatterns: ['/node_modules/', '/__tests__/lib/', '/examples/'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 };

@@ -48,10 +48,47 @@
 只需要执行如下命令：
 
 ```bash
-$ npm run bootstrap
+$ yarn bootstrap
+```
+
+## 组件版本号更新
+
+当前已经发布的组件版本都维护在项目根目录的 `version.yml` 文件，我们可以通过 `yarn change:version` 命令来更新组件版本。
+
+比如更新 `express` 组件版本号，递增方式为 `patch` ：
+
+```bash
+$ yarn change:version --framework=express --type=patch
+```
+
+如果不带 `--type` 参数，会通过交互方式让选择：
+
+```bash
+$ yarn change:version --framework=express
+yarn run v1.22.10
+$ ts-node ./scripts/version.ts --framework=express
+ℹ No version is specified
+? Please select version type ?
+  patch
+  minor
+❯ major
+```
+
+如果想批量更新所有组件版本，带上 `-a` 参数就行：
+
+```bash
+$ yarn change:version --all --type=patch
+```
+
+如果想直接指定版本号：
+
+```bash
+$ yarn change:version --framework=express --ver=2.0.0
 ```
 
 ## 组件发布
+
+更新好组件版本号后，就可以执行 `yarn deploy` 命令来发布组件了。
 
 此项目可以同时发布一下所有框架组件：
 
@@ -69,7 +106,7 @@ $ npm run bootstrap
 修改代码后，只需要执行如下命令部署：
 
 ```bash
-$ npm run deploy
+$ yarn deploy
 ```
 
 部署的组件版本将依赖项目根目录 `version.yml` 中的 `version` 字段。
@@ -77,41 +114,55 @@ $ npm run deploy
 也可以通过命令行指定版本：
 
 ```bash
-$ npm run deploy --version=1.0.0
+$ yarn deploy --version=1.0.0
 ```
 
 发布 `dev` 版本：
 
 ```bash
-$ npm run deploy --dev
+$ yarn deploy --dev
 ```
 
 或者指定特定框架：
 
 ```bash
-$ npm run deploy --framework=express
+$ yarn deploy --framework=express
 ```
 
 组件发布命令默认部署到 `dev` 环境，如果要发布到 `prod` 环境可以通过 `-e` 或者 `--env` 参数指定：
 
 ```bash
-$ npm run deploy --framework=express --env=prod
+$ yarn deploy --framework=express --env=prod
 ```
 
 > 注意：发布到 `prod` 环境参数，请慎用，发布前一定要确保充分验证过。
 
-## 示例项目使用
+## 部署示例项目
 
-项目根目录有 `examples` 目录，下面有支持组件的示例项目，每个项目中都有 `serverless.yml` 配置文件，在开发中，我们经常会将配置中的 `component` 字段使用的组件版本添加 `@dev`，每次手动改会非常麻烦，所以提供了自动化脚本来修改。
+项目根目录有 `examples` 目录，下面有支持组件的示例项目，每个项目中都有 `serverless.yml` 配置文件，在开发中，我们经常会将配置中的 `component` 字段使用的组件版本添加 `@dev`，每次手动改会非常麻烦，所以提供了自动化脚本自动部署。
 
-比如指定修改 `examples/express` 为 `dev` 版本：
+比如使用 `dev` 环境的组件 `express` 的 `dev` 版本：
 
 ```bash
-$ npm run change:version -f expess -d
+$ yarn example -f express -d
 ```
 
-如果需要还原只需执行：
+> 默认使用的就是 `dev` 环境
+
+使用正式环境的 `express` 组件：
 
 ```bash
-$ npm run change:version -f express
+$ yarn example -e prod -f express
+```
+
+如果想部署成功后自动打开网关 URL，可以带上 `-o` 参数：
+
+```bash
+$ yarn example -e prod -o -f express
+```
+
+移除部署的项目：
+
+```bash
+$ yarn example -e prod -f express -r
 ```

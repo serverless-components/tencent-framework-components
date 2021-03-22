@@ -25,12 +25,25 @@ export interface ComponentConfig {
   src: string;
 }
 
+export interface SrcObject {
+  src?: string;
+  dist?: string;
+  hook?: string;
+  exclude?: string[];
+  targetDir?: string;
+  bucket?: string;
+  object?: string;
+}
+
+export type InputsSrc = string | SrcObject;
+
 export interface ServerlessConfig {
+  org?: string;
   app?: string;
   stage?: string;
 
   component: string;
   name: string;
 
-  inputs: Record<string, string>;
+  inputs: { src?: InputsSrc } & Record<string, any>;
 }

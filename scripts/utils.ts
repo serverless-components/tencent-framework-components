@@ -1,7 +1,8 @@
+import { join } from 'path';
 import * as YAML from 'js-yaml';
 import { readFileSync, writeFileSync, rmSync } from 'fs';
 import * as fse from 'fs-extra';
-import { Framework, ComponentConfig } from '../typings';
+import { Framework, ComponentConfig, ServerlessConfig, InputsSrc, SrcObject } from '../typings';
 import { COMPONENT_CODE_PATH } from './config';
 
 const { ServerlessSDK } = require('@serverless/platform-client-china');
@@ -97,4 +98,47 @@ export async function rmdirSync(source: string) {
     recursive: true,
     force: true,
   });
+}
+
+export function getExampleConfig(framework: string) {
+  const examplePath = join(__dirname, '..', 'examples', framework);
+  const exampleYaml = join(examplePath, 'serverless.yml');
+  const yamlConfig = parseYaml(exampleYaml) as ServerlessConfig;
+
+  return {
+    examplePath,
+    yamlConfig,
+  };
+}
+
+export function generateId(len: number = 6) {
+  return Math.random()
+    .toString(36)
+    .substring(len);
+}
+
+export function getServerlessSdk(orgName: string, orgUid: string) {
+  const sdk = new ServerlessSDK({
+    context: {
+      orgUid,
+      orgName,
+    },
+  });
+  return sdk;
+}
+
+export function resolveSrcConfig(baseDir: string, srcConfig: InputsSrc): SrcObject {
+  if (typeof srcConfig === 'string') {
+    const src = {
+      src: join(baseDir, srcConfig),
+    };
+    return src;
+  }
+  if (srcConfig.src) {
+    srcConfig.src = join(baseDir, srcConfig.src!);
+  } else if (srcConfig.dist) {
+    srcConfig.dist = join(baseDir, srcConfig.dist!);
+    srcConfig.src = srcConfig.dist;
+  }
+  return srcConfig;
 }

@@ -10,14 +10,14 @@ const credentials = {
   },
 };
 
-const framework = 'express';
+const framework = 'nextjs';
+process.env.STATIC_URL = `https://${framework}-demo-1303241281.cos.ap-guangzhou.myqcloud.com`;
 const { examplePath, yamlConfig } = getExampleConfig(framework);
 yamlConfig.name = `${framework}-integration-test-${generateId()}`;
 yamlConfig.org = appId;
 yamlConfig.component = `${framework}@dev`;
 
 const srcConfig = resolveSrcConfig(examplePath, yamlConfig.inputs.src!);
-
 if (srcConfig.hook) {
   const commandArr = srcConfig.hook.split(' ');
   spawnSync(commandArr[0], commandArr.slice(1), { cwd: examplePath });
