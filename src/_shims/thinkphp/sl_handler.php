@@ -16,6 +16,16 @@ function consoleLog($prefix, $var)
 function handlerStatic($path, $isBase64Encoded)
 {
   $filename = __DIR__ . "/public/" . $path;
+  if (!file_exists($filename)) {
+    return [
+      "isBase64Encoded" => false,
+      "statusCode" => 404,
+      "headers" => [
+        'Content-Type'  => '',
+      ],
+      "body" => "404 Not Found",
+    ];
+  }
   $handle   = fopen($filename, "r");
   $contents = fread($handle, filesize($filename));
   fclose($handle);
@@ -135,8 +145,7 @@ function handler($event, $context)
     // init path
     $path = '/' == $event->path ? '' : ltrim($event->path, '/');
 
-    $filename = __DIR__ . "/public/" . $path;
-    if (file_exists($filename) && (preg_match(TEXT_REG, $path) || preg_match(BINARY_REG, $path))) {
+    if (preg_match(TEXT_REG, $path) || preg_match(BINARY_REG, $path)) {
         return handlerStatic($path, $isBase64Encoded);
     }
 

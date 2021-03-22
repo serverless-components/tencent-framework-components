@@ -21,6 +21,16 @@ function consoleLog($prefix, $var)
 function handlerStatic($path, $isBase64Encoded)
 {
   $filename = __DIR__ . "/public" . $path;
+  if (!file_exists($filename)) {
+    return [
+      "isBase64Encoded" => false,
+      "statusCode" => 404,
+      "headers" => [
+        'Content-Type'  => '',
+      ],
+      "body" => "404 Not Found",
+    ];
+  }
   $handle   = fopen($filename, "r");
   $contents = fread($handle, filesize($filename));
   fclose($handle);
