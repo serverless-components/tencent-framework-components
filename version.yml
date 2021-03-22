@@ -6,5 +6,5 @@ nuxtjs: 1.0.4
 nestjs: 1.0.4
 flask: 1.0.4
 django: 1.0.4
-laravel: 1.0.4
-thinkphp: 1.0.4
+laravel: 1.0.5
+thinkphp: 1.0.5
