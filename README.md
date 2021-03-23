@@ -157,9 +157,9 @@ TENCENT_SECRET_ID=123
 TENCENT_SECRET_KEY=123
 ```
 
-## 本地开发组件
+## 说明文档
 
-参考 [开发文档](./docs/develop.md)
+[说明文档](./docs/index.md)
 
 ## License
 
