@@ -29,4 +29,4 @@ export type State = {
 
   apiList: ApiEndpoint[];
   customDomains: ApigwBindCustomDomainOutputs[];
-};
+} & Record<string, any>;

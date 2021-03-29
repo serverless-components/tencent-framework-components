@@ -116,7 +116,8 @@ export const formatInputs = (state: State, inputs: Partial<Inputs> = {}) => {
   const region = inputs.region ?? 'ap-guangzhou';
 
   // chenck state function name
-  const stateFunctionName = state.functionName;
+  const regionState = state[region];
+  const stateFunctionName = state.functionName || (regionState && regionState.funcitonName);
 
   const functionConf: ScfInputs = Object.assign(tempFunctionConf, {
     code: {
