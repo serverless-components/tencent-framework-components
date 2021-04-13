@@ -1,10 +1,21 @@
 const express = require('express')
 const path = require('path')
+const fs = require('fs')
 const app = express()
 
 // Routes
 app.get(`/`, (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'))
+})
+
+app.get(`/logo`, (req, res) => {
+  const logo = path.join(__dirname, 'logo.png')
+  const content = fs.readFileSync(logo, {
+    encoding: 'base64'
+  });
+  res.set('Content-Type', 'image/png')
+  res.send(Buffer.from(content, 'base64'))
+  res.status(200).end();
 })
 
 app.get('/user', (req, res) => {
@@ -39,6 +50,14 @@ app.use(function(err, req, res, next) {
   res.status(500).send('Internal Serverless Error')
 })
 
-app.listen(8080)
+// 指定特定的 mime 类型返回，会经过 Base64 编码，以便通过 API 网关正常返回给客户端
+app.binaryTypes = ['image/png']
 
-module.exports = app
+if (process.env.SERVERLESS) {
+  module.exports = app
+} else {
+  app.listen(3000, () => {
+    console.log(`Server start on http://localhost:3000`);
+  })
+}
+
