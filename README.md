@@ -157,9 +157,9 @@ TENCENT_SECRET_ID=123
 TENCENT_SECRET_KEY=123
 ```
 
-## 说明文档
+## 使用文档
 
-[说明文档](./docs/index.md)
+[使用文档](./docs/README.md)
 
 ## License
 

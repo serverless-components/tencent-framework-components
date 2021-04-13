@@ -54,6 +54,7 @@ inputs:
     customDomains: # 自定义域名绑定
       - domain: abc.com # 待绑定的自定义的域名
         certificateId: abcdefg # 待绑定自定义域名的证书唯一 ID
+        isForcedHttps: true # 是否强制https，如果为true，必须配置 certificateId (SSL证书 ID)
         # 如要设置自定义路径映射，请设置为 false
         isDefaultMapping: false
         # 自定义路径映射的路径。使用自定义映射时，可一次仅映射一个 path 到一个环境，也可映射多个 path 到多个环境。并且一旦使用自定义映射，原本的默认映射规则不再生效，只有自定义映射路径生效。

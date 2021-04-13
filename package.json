@@ -30,12 +30,10 @@
   },
   "lint-staged": {
     "**/*.{js,ts,tsx}": [
-      "npm run lint:fix",
-      "git add ."
+      "npm run lint:fix"
     ],
     "**/*.{css,html,js,ts,json,md,yaml,yml}": [
-      "npm run prettier:fix",
-      "git add ."
+      "npm run prettier:fix"
     ]
   },
   "author": "Tencent Cloud, Inc.",
