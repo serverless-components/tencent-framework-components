@@ -18,6 +18,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/headers', function (Request $request) {
+    $headers = $request->headers->all();
+
+    return response()->json([
+        'title' => 'serverless',
+        'headers' => $headers,
+    ]);
+});
+
 Route::get('/posts', function (Request $request) {
     $input = $request->all();
 

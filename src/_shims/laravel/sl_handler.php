@@ -2,6 +2,7 @@
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\HeaderBag;
 
 define('LARAVEL_START', microtime(true));
 define('TEXT_REG', '#\.html.*|\.js.*|\.css.*|\.html.*#');
@@ -229,6 +230,7 @@ function handler($event, $context)
   $kernel = $app->make(Kernel::class);
 
   $request = Request::create($path, $event->httpMethod, (array) $data, [], [], $headers, $rawBody);
+  $request->headers = new HeaderBag($headers);
   if (!empty($files)) {
     $request->files->add($files);
   }
