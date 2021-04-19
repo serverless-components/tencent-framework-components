@@ -40,6 +40,9 @@ inputs:
     layers:
       - name: layerName #  layer名称
         version: 1 #  版本
+    cls: # 日志配置
+      logsetId: 'xxx' # 日志集 ID
+      topicId: 'xxx' # 日志主题 ID
   apigatewayConf: #  api网关配置
     isDisabled: false # 是否禁用自动创建 API 网关功能
     id: service-np1uloxw # api网关服务ID

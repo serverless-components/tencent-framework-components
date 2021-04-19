@@ -4,7 +4,7 @@
     "download": "^8.0.0",
     "fs-extra": "^9.1.0",
     "js-yaml": "^4.0.0",
-    "tencent-component-toolkit": "^2.5.12"
+    "tencent-component-toolkit": "^2.5.13"
   },
   "devDependencies": {
     "@types/adm-zip": "^0.4.33",

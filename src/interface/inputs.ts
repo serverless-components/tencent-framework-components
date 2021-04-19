@@ -25,6 +25,7 @@ export interface ScfInputs {
   needSetTraffic?: boolean | string;
   vpcConfig?: { vpcId: string; subnetId: string };
   vpc?: { vpcId: string; subnetId: string };
+  cls?: { logsetId: string; topicId: string };
 }
 
 export interface ApigwInputs {
