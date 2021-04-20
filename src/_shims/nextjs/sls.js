@@ -24,6 +24,7 @@ async function createServer() {
   // if includes, will return base64 encoded, very useful for images
   server.binaryTypes = ['*/*']
 
+  // 返回 server
   return server
 }
 
