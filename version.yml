@@ -4,7 +4,7 @@ egg: 1.0.7
 nextjs: 1.0.7
 nuxtjs: 1.0.7
 nestjs: 1.0.7
-flask: 1.0.7
-django: 1.0.7
+flask: 1.0.8
+django: 1.0.8
 laravel: 1.0.8
 thinkphp: 1.0.7
