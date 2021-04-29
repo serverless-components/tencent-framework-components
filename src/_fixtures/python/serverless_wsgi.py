@@ -138,8 +138,12 @@ def handle_request(app, event, context):
         "wsgi.run_once": False,
         "wsgi.url_scheme": headers.get(u"X-Forwarded-Proto", "http"),
         "wsgi.version": (1, 0),
-        "wsgi.authorizer": event["requestContext"].get(u"authorizer"),
+        "serverless.authorizer": event["requestContext"].get(u"authorizer"),
+        "serverless.event": event,
+        "serverless.context": context,
         "API_GATEWAY_AUTHORIZER": event["requestContext"].get(u"authorizer"),
+        "event": event,
+        "context": context,
     }
 
     os.environ["__SLS_EVENT__"] = json.dumps(event)
