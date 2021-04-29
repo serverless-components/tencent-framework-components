@@ -1,3 +1,5 @@
+import os
+import json
 from django.shortcuts import render
 from django.http import HttpResponse
 
@@ -7,5 +9,10 @@ def index(request):
     return render(request, 'index.html', context={'hello': 'world'})
 
 def author(request):
-    print(request)
     return HttpResponse("Tencent Cloud Serverless Team")
+
+# 获取函数 event
+def event(request):
+    event = os.environ.get("__SLS_EVENT__")
+    event = json.loads(event)
+    return HttpResponse(json.dumps(event), content_type="application/json")

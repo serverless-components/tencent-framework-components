@@ -1,4 +1,5 @@
 import os
+import json
 from flask import Flask, jsonify, render_template, request, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 
@@ -17,6 +18,13 @@ initUploadDir()
 @app.route("/")
 def index():
     return render_template('index.html')
+
+# 获取函数 event
+@app.route("/event")
+def event():
+    event = os.environ.get("__SLS_EVENT__")
+    event = json.loads(event)
+    return jsonify(data=event)
 
 @app.route("/users", methods=['GET', 'POST'])
 def users():

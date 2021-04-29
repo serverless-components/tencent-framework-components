@@ -4,6 +4,7 @@
 import base64
 import os
 import sys
+import json
 from werkzeug.datastructures import Headers, MultiDict
 from werkzeug.wrappers import Response
 from werkzeug.urls import url_encode, url_unquote
@@ -66,6 +67,16 @@ def encode_query_string(event):
     else:
         return url_encode(event.get(u"queryString") or {})
 
+def setup_environ_items(environ, headers):
+    for key, value in environ.items():
+        if isinstance(value, string_types):
+            environ[key] = wsgi_encoding_dance(value)
+
+    for key, value in headers.items():
+        key = "HTTP_" + key.upper().replace("-", "_")
+        if key not in ("HTTP_CONTENT_TYPE", "HTTP_CONTENT_LENGTH"):
+            environ[key] = value
+    return environ
 
 def handle_request(app, event, context):
     if u"multiValueHeaders" in event:
@@ -127,23 +138,14 @@ def handle_request(app, event, context):
         "wsgi.run_once": False,
         "wsgi.url_scheme": headers.get(u"X-Forwarded-Proto", "http"),
         "wsgi.version": (1, 0),
-        "serverless.authorizer": event["requestContext"].get(u"authorizer"),
-        "serverless.event": event,
-        "serverless.context": context,
+        "wsgi.authorizer": event["requestContext"].get(u"authorizer"),
         "API_GATEWAY_AUTHORIZER": event["requestContext"].get(u"authorizer"),
-        "event": event,
-        "context": context,
     }
 
-    for key, value in environ.items():
-        if isinstance(value, string_types):
-            environ[key] = wsgi_encoding_dance(value)
+    os.environ["__SLS_EVENT__"] = json.dumps(event)
+    os.environ["__SLS_CONTEXT__"] = json.dumps(context)
 
-    for key, value in headers.items():
-        key = "HTTP_" + key.upper().replace("-", "_")
-        if key not in ("HTTP_CONTENT_TYPE", "HTTP_CONTENT_LENGTH"):
-            environ[key] = value
-
+    environ = setup_environ_items(environ, headers)
     response = Response.from_app(app, environ)
 
     returndict = {u"statusCode": response.status_code}
