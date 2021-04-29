@@ -15,4 +15,8 @@ def author(request):
 def event(request):
     event = os.environ.get("__SLS_EVENT__")
     event = json.loads(event)
-    return HttpResponse(json.dumps(event), content_type="application/json")
+    msg = {
+      "globalEvent": event,
+      "requestEvent": request.environ.get("event")
+    }
+    return HttpResponse(json.dumps(msg), content_type="application/json")

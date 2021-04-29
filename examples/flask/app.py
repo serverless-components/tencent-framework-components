@@ -24,7 +24,11 @@ def index():
 def event():
     event = os.environ.get("__SLS_EVENT__")
     event = json.loads(event)
-    return jsonify(data=event)
+    msg = {
+      "globalEvent": event,
+      "requestEvent": request.environ.get("event")
+    }
+    return jsonify(data=msg)
 
 @app.route("/users", methods=['GET', 'POST'])
 def users():
