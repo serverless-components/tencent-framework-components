@@ -18,6 +18,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/event', function (Request $request) {
+    $event = $request->__SLS_EVENT__;
+
+    return response()->json([
+        'event' => $event,
+    ]);
+});
+
 Route::get('/headers', function (Request $request) {
     $headers = $request->headers->all();
 

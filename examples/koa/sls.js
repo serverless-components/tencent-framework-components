@@ -7,8 +7,13 @@ const app = new Koa()
 const router = new KoaRouter()
 
 // Routes
-router.get(`/*`, async (ctx) => {
+router.get(`/`, async (ctx) => {
   await sendFile(ctx, path.join(__dirname, 'index.html'))
+})
+
+router.get('/event', async (ctx) => {
+  const event = ctx.request.__SLS_EVENT__;
+  ctx.body = event
 })
 
 app.use(router.allowedMethods()).use(router.routes())

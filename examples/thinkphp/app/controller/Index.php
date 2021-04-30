@@ -45,4 +45,11 @@ class Index extends BaseController
         "upload" => $savename ?? null
       ]);
     }
+
+    public function event(Request $request) {
+      $event = $request->__SLS_EVENT__;
+      return json([
+        "event" => $event,
+      ]);
+    }
 }

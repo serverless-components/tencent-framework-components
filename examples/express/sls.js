@@ -8,6 +8,12 @@ app.get(`/`, (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'))
 })
 
+// 获取 event
+app.get(`/event`, (req, res) => {
+  const event = req.__SLS_EVENT__
+  res.send(event)
+})
+
 app.get(`/logo`, (req, res) => {
   const logo = path.join(__dirname, 'logo.png')
   const content = fs.readFileSync(logo, {

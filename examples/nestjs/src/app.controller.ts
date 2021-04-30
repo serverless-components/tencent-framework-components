@@ -1,4 +1,5 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Render, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { AppService } from './app.service';
 
 @Controller()
@@ -10,6 +11,15 @@ export class AppController {
   root() {
     return {
       message: 'Serverless Framework',
+    };
+  }
+
+  @Get('/event')
+  event(@Req() request: Request) {
+    // @ts-ignore
+    const event = request.__SLS_EVENT__;
+    return {
+      event: event || {}
     };
   }
 }
