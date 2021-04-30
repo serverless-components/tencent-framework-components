@@ -203,6 +203,11 @@ function handler($event, $context)
     $request->setMethod($event->httpMethod);
     $request->withHeader($headers);
 
+    try {
+      $request->__SLS_EVENT__ = $event;
+      $request->__SLS_CONTEXT__ = $context;
+    } catch (Exception $e) {}
+
     // Check if it is running in multi-app
     $isMultiApp = isMultiApp($app);
     if($isMultiApp) {

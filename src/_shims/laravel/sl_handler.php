@@ -234,6 +234,13 @@ function handler($event, $context)
   if (!empty($files)) {
     $request->files->add($files);
   }
+
+  try {
+    $request->__SLS_EVENT__ = $event;
+    $request->__SLS_CONTEXT__ = $context;
+  } catch (Exception $e) {}
+
+
   $response = $kernel->handle(
     $request
   );
