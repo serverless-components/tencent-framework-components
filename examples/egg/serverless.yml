@@ -9,7 +9,6 @@ inputs:
       - .env
   functionConf:
     name: ${name}
-    namespace: test
   apigatewayConf:
     protocols:
       - http

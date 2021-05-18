@@ -24,13 +24,13 @@ export const formatStaticCosInputs = async (
     const staticCosInputs = [];
     const sources = cosConf.sources || CONFIGS.defaultStatics;
     const { bucket } = cosConf;
-    // remove user append appid
+
+    // 删除用户填写时携带的 appid
     const bucketName = removeAppid(bucket, appId);
     const staticPath = `/tmp/${generateId()}`;
     const codeZip = new AdmZip(codeZipPath);
     const entries = codeZip.getEntries();
 
-    // traverse sources, generate static directory and deploy to cos
     for (let i = 0; i < sources.length; i++) {
       const curSource = sources[i];
       const entryName = `${curSource.src}`;
@@ -82,7 +82,7 @@ export const formatStaticCdnInputs = async (cdnConf: CdnInputs, origin: string) 
     onlyRefresh: cdnConf.onlyRefresh,
   };
   if (cdnConf.https) {
-    // using these default configs, for making user's config more simple
+    // 通过提供默认的配置来简化用户配置
     cdnInputs.forceRedirect = cdnConf.forceRedirect || CONFIGS.defaultCdnConfig.forceRedirect;
     if (!cdnConf.https.certId) {
       throw new ApiTypeError(
@@ -111,11 +111,11 @@ export const formatStaticCdnInputs = async (cdnConf: CdnInputs, origin: string) 
 };
 
 export const formatInputs = (state: State, inputs: Partial<Inputs> = {}) => {
-  // 对function inputs进行标准化
+  // 标准化函数参数
   const tempFunctionConf: ScfInputs = inputs.functionConf ?? ({} as any);
   const region = inputs.region ?? 'ap-guangzhou';
 
-  // chenck state function name
+  // 获取状态中的函数名称
   const regionState = state[region];
   const stateFunctionName = state.functionName || (regionState && regionState.funcitonName);
 
@@ -135,29 +135,32 @@ export const formatInputs = (state: State, inputs: Partial<Inputs> = {}) => {
     description: tempFunctionConf.description ?? inputs.description ?? CONFIGS.description,
     layers: tempFunctionConf.layers ?? inputs.layers ?? [],
     cfs: tempFunctionConf.cfs ?? [],
-    publish: inputs.publish,
-    traffic: inputs.traffic,
+    publish: tempFunctionConf.publish || inputs.publish,
+    traffic: tempFunctionConf.traffic || inputs.traffic,
     lastVersion: state.lastVersion,
     timeout: tempFunctionConf.timeout ?? CONFIGS.timeout,
     memorySize: tempFunctionConf.memorySize ?? CONFIGS.memorySize,
     tags: tempFunctionConf.tags ?? inputs.tags ?? null,
   });
 
-  const entryFile = inputs.entryFile || CONFIGS.defaultEntryFile;
-  const { defaultEnvs } = CONFIGS;
   if (!functionConf.environment?.variables) {
     functionConf.environment = {
       variables: {},
     };
   }
+  // 添加框架需要添加的默认环境变量
+  const { defaultEnvs } = CONFIGS;
   defaultEnvs.forEach((item) => {
     functionConf.environment!.variables![item.key] = item.value;
   });
+
+  // 添加入口文件环境变量
+  const entryFile = functionConf.entryFile || inputs.entryFile || CONFIGS.defaultEntryFile;
   if (entryFile) {
     functionConf.environment!.variables!['SLS_ENTRY_FILE'] = entryFile;
   }
 
-  // django 项目需要 projectName
+  // django 项目需要 projectName 参数
   if (CONFIGS.framework === 'django') {
     functionConf.projectName =
       tempFunctionConf.projectName ??
@@ -166,17 +169,19 @@ export const formatInputs = (state: State, inputs: Partial<Inputs> = {}) => {
       '';
   }
 
-  // validate traffic
+  // TODO: 验证流量配置，将废弃
   if (inputs.traffic !== undefined) {
     validateTraffic(inputs.traffic);
   }
+  // TODO: 判断是否需要配置流量，将废弃
   functionConf.needSetTraffic = inputs.traffic !== undefined && functionConf.lastVersion;
 
+  // 初始化 VPC 配置
   if (tempFunctionConf.vpcConfig || tempFunctionConf.vpc) {
     functionConf.vpcConfig = tempFunctionConf.vpcConfig || tempFunctionConf.vpc;
   }
 
-  // 对apigw inputs进行标准化
+  //  标准化网关配置参数
   const tempApigwConf: ApigwInputs = inputs.apigatewayConf ?? ({} as any);
   const apigatewayConf: ApigwInputs = Object.assign(tempApigwConf, {
     serviceId: tempApigwConf.serviceId ?? tempApigwConf.id ?? inputs.serviceId,
@@ -194,21 +199,24 @@ export const formatInputs = (state: State, inputs: Partial<Inputs> = {}) => {
     customDomains: tempApigwConf.customDomains || [],
   });
 
+  // 如果没配置，添加默认的 API 配置，通常 Web 框架组件是不要用户自定义的
   if (!apigatewayConf.endpoints) {
     apigatewayConf.endpoints = [
       {
         path: tempApigwConf.path || '/',
         enableCORS: tempApigwConf.enableCORS ?? tempApigwConf.cors,
         serviceTimeout: tempApigwConf.serviceTimeout ?? tempApigwConf.timeout,
-        method: 'ANY',
+        method: tempApigwConf.method || 'ANY',
         apiName: tempApigwConf.apiName || 'index',
         isBase64Encoded: tempApigwConf.isBase64Encoded,
         function: {
           isIntegratedResponse: true,
           functionName: functionConf.name!,
-          functionNamespace: functionConf.namespace!,
+          functionNamespace: functionConf.namespace,
           functionQualifier:
-            (tempApigwConf.function && tempApigwConf.function.functionQualifier) || '$LATEST',
+            (tempApigwConf.function && tempApigwConf.function.functionQualifier) ||
+            apigatewayConf.qualifier ||
+            '$DEFAULT',
         },
       },
     ];

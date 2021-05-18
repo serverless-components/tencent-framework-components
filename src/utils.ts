@@ -43,7 +43,7 @@ export const getDefaultProtocol = (protocols: string[]) => {
 };
 
 export const getDefaultFunctionName = () => {
-  return `${CONFIGS.framework}_component_${generateId()}`;
+  return `${CONFIGS.framework}_${generateId()}`;
 };
 
 export const getDefaultServiceName = () => {
