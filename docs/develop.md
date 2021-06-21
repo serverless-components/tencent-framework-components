@@ -89,6 +89,7 @@ $ yarn change:version --framework=express --ver=2.0.0
 ## 组件发布
 
 更新好组件版本号后，就可以执行 `yarn deploy` 命令来发布组件了。
+> 要求 Node.js 版本 `>= 14.14.0`。
 
 此项目可以同时发布一下所有框架组件：
 
