@@ -1,4 +1,4 @@
-const express = require('../nextjs/node_modules/express')
+const express = require('express')
 const app = express()
 
 // Routes
