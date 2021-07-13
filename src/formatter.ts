@@ -176,9 +176,10 @@ export const formatInputs = (state: State, inputs: Partial<Inputs> = {}) => {
   // TODO: 判断是否需要配置流量，将废弃
   functionConf.needSetTraffic = inputs.traffic !== undefined && functionConf.lastVersion;
 
-  // 初始化 VPC 配置
-  if (tempFunctionConf.vpcConfig || tempFunctionConf.vpc) {
-    functionConf.vpcConfig = tempFunctionConf.vpcConfig || tempFunctionConf.vpc;
+  // 初始化 VPC 配置，兼容旧的vpc配置
+  const vpc = tempFunctionConf.vpcConfig || tempFunctionConf.vpc || inputs.vpcConfig || inputs.vpc;
+  if (vpc) {
+    functionConf.vpcConfig = vpc;
   }
 
   //  标准化网关配置参数

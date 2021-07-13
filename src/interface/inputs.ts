@@ -258,7 +258,8 @@ export interface Inputs {
   serviceId?: string;
   functionConf?: ScfInputs;
   apigatewayConf?: ApigwInputs;
-
+  vpc?: { vpcId: string; subnetId: string };
+  vpcConfig?: { vpcId: string; subnetId: string };
   serviceName?: string;
 
   region?: string;
