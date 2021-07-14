@@ -12,6 +12,11 @@ exports.handler = async (event, context) => {
     const nestApp = await getApp()
     await nestApp.init()
     app = nestApp.getHttpAdapter().getInstance()
+
+    // provide sls intialize hooks
+    if (app.slsInitialize && typeof app.slsInitialize === 'function') {
+      await app.slsInitialize()
+    }
   }
 
   // attach event and context to request
@@ -22,19 +27,12 @@ exports.handler = async (event, context) => {
     // no op
   }
 
-  // provide sls intialize hooks
-  if (app.slsInitialize && typeof app.slsInitialize === 'function') {
-    await app.slsInitialize()
-  }
-
-  // cache server, not create repeatly
-  if (!server) {
-    server = createServer(
-      app.callback && typeof app.callback === 'function' ? app.callback() : app,
-      null,
-      app.binaryTypes || []
-    )
-  }
+  // do not cache server, so we can pass latest event to server
+  server = createServer(
+    app.callback && typeof app.callback === 'function' ? app.callback() : app,
+    null,
+    app.binaryTypes || []
+  )
 
   context.callbackWaitsForEmptyEventLoop = app.callbackWaitsForEmptyEventLoop === true
 

@@ -6,13 +6,20 @@ let server
 let app
 
 exports.handler = async (event, context) => {
-  const userSls = path.join(__dirname, '..', process.env.SLS_ENTRY_FILE)
-  if (fs.existsSync(userSls)) {
-    // eslint-disable-next-line
-    console.log(`Using user custom entry file ${process.env.SLS_ENTRY_FILE}`)
-    app = require(userSls)
-  } else {
-    app = require('./sls.js')
+  if (!app) {
+    const userSls = path.join(__dirname, '..', process.env.SLS_ENTRY_FILE)
+    if (fs.existsSync(userSls)) {
+      // eslint-disable-next-line
+      console.log(`Using user custom entry file ${process.env.SLS_ENTRY_FILE}`)
+      app = require(userSls)
+    } else {
+      app = require('./sls.js')
+    }
+
+    // provide sls intialize hooks
+    if (app.slsInitialize && typeof app.slsInitialize === 'function') {
+      await app.slsInitialize()
+    }
   }
 
   // attach event and context to request
@@ -23,15 +30,8 @@ exports.handler = async (event, context) => {
     // no op
   }
 
-  // provide sls intialize hooks
-  if (app.slsInitialize && typeof app.slsInitialize === 'function') {
-    await app.slsInitialize()
-  }
-
-  // cache server, not create repeatly
-  if (!server) {
-    server = createServer(app.callback(), null, app.binaryTypes || [])
-  }
+  // do not cache server, so we can pass latest event to server
+  server = createServer(app.callback(), null, app.binaryTypes || [])
 
   context.callbackWaitsForEmptyEventLoop = app.callbackWaitsForEmptyEventLoop === true
 
