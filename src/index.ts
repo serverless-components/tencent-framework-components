@@ -87,7 +87,7 @@ export class ServerlessComponent extends Component<State> {
 
         const { injectFiles, injectDirs } = getInjection(this, inputs);
 
-        await this.uploadSourceZipToCOS(zipPath, uploadUrl, injectFiles, injectDirs);
+        await this.uploadSourceZipToCOS(zipPath, uploadUrl as string, injectFiles, injectDirs);
         console.log(`Upload ${objectName} to bucket ${bucketName} success`);
       }
     }
